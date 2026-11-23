@@ -1,0 +1,32 @@
+{
+ "session": 2,
+ "generated_at": "2026-11-23T14:57:46+00:00",
+ "passed": 6,
+ "total": 6,
+ "checks": {
+  "청크 생성": {
+   "ok": true,
+   "detail": "3,695개"
+  },
+  "청크 필수 필드": {
+   "ok": true,
+   "detail": "['article', 'chunk_id', 'doc_id', 'page_start', 'text']"
+  },
+  "메타데이터 부착": {
+   "ok": true,
+   "detail": "['doc_type', 'effective_from', 'issuer', 'parser', 'validation']"
+  },
+  "게이트 판정 기록": {
+   "ok": true,
+   "detail": "ocr 575, pass 1,974, reparse 1,146"
+  },
+  "청크 ID 유일·형식": {
+   "ok": true,
+   "detail": "중복 0건 · 형식 위반 0건"
+  },
+  "질문에 근거 청크": {
+   "ok": true,
+   "detail": "3/3문항에 gold_chunk_ids"
+  }
+ }
+}

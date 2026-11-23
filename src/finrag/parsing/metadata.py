@@ -45,8 +45,28 @@ def normalize_article(raw: str) -> str | None:
     # ── TODO: 여기를 채우세요 ──────────────────────────────
     # "제31 조", "제 7 조", "제4조의2" 가 모두 다른 문자열이면 BM25 에서 다른 토큰이 된다.
     # 하나의 정규형으로 모은다. ARTICLE_PAT 을 쓴다.
-    raise NotImplementedError("TODO: normalize_article 를 구현하세요")
+    # raise NotImplementedError("TODO: normalize_article 를 구현하세요")
+    match = ARTICLE_PAT.search(raw)
 
+    if not match:
+        return None
+
+    article_no = str(int(match.group(1)))
+    sub_article_no = match.group(2)
+
+    result = f"제{article_no}조"
+
+    if sub_article_no is not None:
+        result += f"의{int(sub_article_no)}"
+
+    return result
+
+""" 쌤꺼
+m = ARTICLE_PAT.search(raw)
+if not m:
+    return None
+return f"제{m.group(1)}조" + (f"의{m.group(2)}" if m.group(2) else "")
+"""
 
 def expand_query_terms(q: str) -> list[str]:
     """질의에 별칭을 더한다. BM25 는 같은 뜻의 다른 말을 모른다."""

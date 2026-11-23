@@ -55,6 +55,7 @@ class DocReport:
 
 
 def score_page(text: str) -> dict:
+    """글자를 한글자씩 받아서 """
     n = len(text)
     tokens = TOKEN.findall(text)
     return {
@@ -72,7 +73,34 @@ def judge_page(m: dict, *, has_image: bool, skip_space: bool = False) -> tuple[s
     # - 글자가 거의 없다면: 이미지 객체가 있으면 OCR, 없으면 그냥 빈 페이지다(통과).
     # - 글자는 있는데 한글 비율·깨진문자 비율·공백 비율·단음절 비율이 나쁘면 reparse.
     # 임계값 상수는 위에 있다. 왜 그 값인지는 실제 문서로 확인하고 기록한다.
-    raise NotImplementedError("TODO: judge_page 를 구현하세요")
+    reasons = []
+
+    # 1. 텍스트가 거의 없는 페이지
+    if m["chars"] < MIN_CHARS_PER_PAGE:
+        if has_image:
+            return "ocr", ["text_too_short", "image_detected"]
+        else:
+            return "pass", ["text_too_short", "no_image"]
+
+    # 2. 텍스트 품질 검사
+    if m["hangul_ratio"] < MIN_HANGUL_RATIO:
+        reasons.append("low_hangul_ratio")
+
+    if m["broken_ratio"] > MAX_BROKEN_RATIO:
+        reasons.append("high_broken_ratio")
+
+    if not skip_space and m["space_ratio"] < MIN_SPACE_RATIO:
+        reasons.append("low_space_ratio")
+
+    if m["single_char_token_ratio"] > MAX_SINGLE_CHAR_TOKEN_RATIO:
+        reasons.append("high_single_char_token_ratio")
+
+    # 3. 이상이 하나라도 있으면 재추출
+    if reasons:
+        return "reparse", reasons
+
+    # 4. 정상 페이지
+    return "pass", []
 
 
 def validate(extraction, page_objs: list[dict] | None = None) -> DocReport:

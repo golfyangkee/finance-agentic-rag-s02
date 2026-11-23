@@ -65,7 +65,20 @@ def split_articles(pages: list[str]) -> list[dict]:
             # title 은 m.group(3) 의 양끝 공백을 지운 것, lines 는 [line], page_start 와 page_end 는 pno.
             # m 이 없으면 cur["lines"] 에 line 을 붙이고 cur["page_end"] 를 pno 로 갱신한다.
             # page_start / page_end 가 있어야 나중에 근거로 쪽수를 인용할 수 있다.
-            raise NotImplementedError("TODO: split_articles 를 구현하세요")
+            if m:
+                if cur["lines"]:
+                    blocks.append(cur)
+
+                cur = {
+                    "article": normalize_article(m.group(0)) or "",
+                    "title": m.group(3).strip(),
+                    "lines": [line],
+                    "page_start": pno,
+                    "page_end": pno,
+                }
+            else:
+                cur["lines"].append(line)
+                cur["page_end"] = pno
     if cur["lines"]:
         blocks.append(cur)
     return blocks
